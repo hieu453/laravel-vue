@@ -14,6 +14,6 @@ import { onMounted } from 'vue';
 
 const authStore = useAuthStore();
 
-console.log(authStore.isAuthenticated);
+// console.log(`Logged in: ${authStore.isAuthenticated}`);
 
 </script>

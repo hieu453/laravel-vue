@@ -23,8 +23,6 @@ class RegisterController extends Controller
             'password' => $validatedInformation['password'], // Auto cast in model (hashed)
         ]);
 
-        Auth::login($user);
-
-        return response()->noContent();
+        return response($user);
     }
 }

@@ -30,7 +30,6 @@
 </template>
 
 <script setup>
-import { api } from '@/plugin/axios';
 import { useAuthStore } from '@/stores/useAuthStore';
 import getValidationErrors from '@/utils/getValidationErrors';
 import { reactive, ref } from 'vue';
@@ -50,7 +49,7 @@ const form = reactive({
 const login = async () => {
     try {
         await authStore.login(form)
-        router.push({ path: '/dashboard' })
+        router.push({ name: 'dashboard' })
     } catch (error) {
         errors.value = getValidationErrors(error);
     }

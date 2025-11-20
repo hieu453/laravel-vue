@@ -75,6 +75,7 @@
 
 <script setup>
 import { api } from '@/plugin/axios';
+import { useAuthStore } from '@/stores/useAuthStore';
 import getValidationErrors from '@/utils/getValidationErrors';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -92,10 +93,17 @@ const form = reactive({
     password_confirmation: null,
 })
 
+const authStore = useAuthStore();
+
 const submit = async () => {
    try {
+        await api.get('/sanctum/csrf-cookie')
         await api.post('/api/register', form)
-        router.push({ path: '/' })
+        await authStore.login({
+            email: form.email,
+            password: form.password,
+        })
+        router.push({ name: '/dashboard' })
    } catch (error) {
         errors.value = getValidationErrors(error)
    }

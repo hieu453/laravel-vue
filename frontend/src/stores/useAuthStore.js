@@ -6,7 +6,6 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref(
         JSON.parse(localStorage.getItem('user')) ?? {
             loggedIn: false,
-            data: null,
         }
     )
     const isAuthenticated = computed(() => user.value.loggedIn)
@@ -14,14 +13,18 @@ export const useAuthStore = defineStore('auth', () => {
     const login = async (credentials) => {
         await api.get('/sanctum/csrf-cookie')
         await api.post('/api/login', credentials)
-        const response = await api.get('/api/user')
+        try {
+            const response = await api.get('/api/user')
+            localStorage.setItem('user', JSON.stringify({
+                loggedIn: true,
+                ...response.data,
+            }))
+    
+            user.value = JSON.parse(localStorage.getItem('user'))
+        } catch (e) {
+            console.log(e)
+        }
         
-        localStorage.setItem('user', JSON.stringify({
-            loggedIn: true,
-            data: response.data
-        }))
-
-        user.value = JSON.parse(localStorage.getItem('user'))
     }
 
     const logout = async () => {
@@ -29,7 +32,6 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('user');
         user.value = {
             loggedIn: false,
-            data: null,
         }
     }
     
