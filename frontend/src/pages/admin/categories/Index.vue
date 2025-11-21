@@ -3,6 +3,7 @@
     <transition>
       <edit-modal
         :isOpen="isOpenEdit"
+        :loading="loading"
         @close-modal="isOpenEdit = false"
         @update="update"
       >
@@ -13,6 +14,15 @@
           </div>
         </form>
       </edit-modal>
+    </transition>
+    <transition>
+      <delete-modal
+        :isOpen="isOpenDelete"
+        @close-modal="isOpenDelete = false"
+        @delete="destroy"
+      >
+        You want to delete?
+      </delete-modal>
     </transition>
     <div class="mb-20">
       <h1 class="text-lg uppercase font-bold text-blue-300">Categories</h1>
@@ -50,7 +60,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in categories">
+            <tr v-for="category in categories" :key="category.id">
               <td class="p-4 border-b border-gray-50">
                 <p class="block font-sans text-sm antialiased font-normal leading-normal text-gray-900">
                   {{ category.id }}
@@ -81,7 +91,7 @@
                     Edit
                   </a>
                   <a
-                    @click=""
+                    @click="openDeleteModal(category.id)"
                     href="#"
                     class="block text-red-400 font-sans text-sm antialiased font-medium leading-normal"
                   >
@@ -102,10 +112,12 @@ import { onMounted, reactive, ref } from 'vue';
 import MainContent from '../layouts/MainLayout.vue';
 import { api } from '@/plugin/axios';
 import EditModal from '@/components/EditModal.vue';
+import DeleteModal from '@/components/DeleteModal.vue';
 import { useToast } from 'vue-toastification';
 
 const categories = ref();
 const isOpenEdit = ref(false);
+const isOpenDelete = ref(false);
 const loading = ref(false);
 
 const form = ref()
@@ -124,9 +136,15 @@ onMounted(async () => {
 })
 
 const openEditModal = async (categoryId) => {
-  const response = await api.get(`/api/categories/${categoryId}`);
-  form.value = response.data
   isOpenEdit.value = true;
+
+  form.value = categories.value.find(category => category.id === categoryId)
+}
+
+const openDeleteModal = async (categoryId) => {
+  isOpenDelete.value = true;
+
+  form.value = categories.value.find(category => category.id === categoryId)
 }
 
 const update = async () => {
@@ -143,5 +161,20 @@ const update = async () => {
   } catch (error) {
     toast.error(`Error: ${error.message}`)
   }
+}
+
+const destroy = async () => {
+  try {
+    await api.delete(`/api/categories/${form.value.id}`)
+    const response = await api.get('/api/categories')
+
+    isOpenDelete.value = false;
+    categories.value = response.data
+
+    toast.success('Category deleted');
+  } catch (error) {
+    toast.error(`Error: ${error.message}`)
+  }
+
 }
 </script>
