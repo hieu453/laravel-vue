@@ -8,10 +8,20 @@
         @close-modal="closeEditModal"
         @update="update"
       >
-        <h1>Edit category</h1>
+        <h1 class="text-xl font-bold mb-3">Edit category</h1>
         <form action="" @submit.prevent">
-          <div>
-            <input type="text" class="border" v-model="form.name" @input="console.log(initialForm)">
+          <div class="mb-3">
+            <div>
+              <label for="" class="font-bold">Name:</label>
+            </div>
+            <input
+              type="text" class="border border-gray-300 rounded-md p-2"
+              v-model="form.name"
+              placeholder="Enter category name"
+            />
+            <div>
+              <span v-if="errors" class="text-red-500">{{ errors.name[0] }}</span>
+            </div>
           </div>
         </form>
       </edit-modal>
@@ -33,10 +43,20 @@
         @close-modal="closeCreateModal"
         @store="store"
       >
-        <h1>Create category</h1>
+        <h1 class="text-xl font-bold mb-3">Create category</h1>
         <form action="">
-          <div>
-            <input type="text" class="border" v-model="form.name">
+          <div class="mb-3">
+            <div>
+              <label for="" class="font-bold">Name:</label>
+            </div>
+            <input
+              type="text" class="border border-gray-300 rounded-md p-2"
+              v-model="form.name"
+              placeholder="Enter category name"
+            />
+            <div>
+              <span v-if="errors" class="text-red-500">{{ errors.name[0] }}</span>
+            </div>
           </div>
         </form>
       </create-modal>
@@ -131,7 +151,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ErrorCodes, onMounted, ref } from 'vue';
 import MainContent from '../layouts/MainLayout.vue';
 import { api } from '@/plugin/axios';
 import EditModal from '@/components/EditModal.vue';
@@ -139,6 +159,7 @@ import DeleteModal from '@/components/DeleteModal.vue';
 import { useToast } from 'vue-toastification';
 import CustomButton from '@/components/Button.vue';
 import CreateModal from '@/components/CreateModal.vue';
+import getValidationErrors from '@/utils/getValidationErrors';
 
 const initialForm = {
   name: ''
@@ -149,6 +170,8 @@ const isOpenCreate = ref(false)
 const isOpenEdit = ref(false);
 const isOpenDelete = ref(false);
 const loading = ref(false);
+
+const errors = ref();
 
 const form = ref({...initialForm})
 
@@ -165,18 +188,38 @@ onMounted(async () => {
   }
 })
 
+// Inner component helper------------------------------------------------------
+const flush = () => {
+  errors.value = null
+  loading.value = false;
+}
+
+const setError = (error) => {
+  toast.error(`Err: ${error.message}`)
+  errors.value = getValidationErrors(error)
+  loading.value = false;
+}
+// End inner component helper---------------------------------------------------
+
+// Open edit modal--------------------------------------------------------------
 const openEditModal = async (categoryId) => {
   isOpenEdit.value = true;
 
   form.value = {...(categories.value.find(category => category.id === categoryId))} // Copy element, because returned element is object (points to the same localtion in memory)
 }
+// End open edit modal--------------------------------------------------------------
 
+
+// Open delete modal--------------------------------------------------------------------------------------
 const openDeleteModal = async (categoryId) => {
   isOpenDelete.value = true;
 
   form.value = {...(categories.value.find(category => category.id === categoryId))} // The same above
 }
+// End open delete modal----------------------------------------------------------------------------------
 
+
+// Action CRUD--------------------------------------------------------------
 const store = async () => {
   try {
     loading.value = true
@@ -191,9 +234,11 @@ const store = async () => {
     categories.value = response.data
     form.value = {...initialForm}
 
+    flush();
+
     toast.success('Category created')
   } catch (error) {
-    toast.error(`Err: ${error.message}`)
+    setError(error);
   }
 
 }
@@ -212,9 +257,11 @@ const update = async () => {
     categories.value = response.data
     form.value = {...initialForm}
 
+    flush();
+
     toast.success('Category updated')
   } catch (error) {
-    toast.error(`Error: ${error.message}`)
+    setError(error)
   }
 }
 
@@ -233,19 +280,25 @@ const destroy = async () => {
     toast.success('Category deleted');
   } catch (error) {
     toast.error(`Error: ${error.message}`)
+    loading.value = false;
   }
 }
+// End action CRUD--------------------------------------------------------------
 
 const closeCreateModal = () => {
   isOpenCreate.value = false;
 
   form.value = {...initialForm}
+
+  flush();
 }
 
 const closeEditModal = () => {
   isOpenEdit.value = false;
 
   form.value = {...initialForm}
+
+  flush();
 }
 
 const closeDeleteModal = () => {

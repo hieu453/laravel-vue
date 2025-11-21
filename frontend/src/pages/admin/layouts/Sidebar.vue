@@ -3,10 +3,10 @@
     <profile-info :user-info="authStore.user" />
     <sidebar-menu-item />
     <div class="mt-2 mb-16 flex justify-center">
-      <p-button @click="logout"
-        class="border border-purple-300 p-2 transition rounded hover:cursor-pointer hover:bg-purple-300">
+      <custom-button @click="logout"
+        class="bg-purple-600 hover:bg-purple-500">
         Logout
-      </p-button>
+      </custom-button>
     </div>
   </div>
 </template>
@@ -16,6 +16,7 @@ import { useRouter } from 'vue-router';
 import ProfileInfo from './ProfileInfo.vue';
 import SidebarMenuItem from './SidebarMenuItem.vue';
 import { useAuthStore } from '@/stores/useAuthStore';
+import CustomButton from '@/components/Button.vue';
 
 const authStore = useAuthStore();
 
