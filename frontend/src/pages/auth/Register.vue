@@ -88,7 +88,7 @@ const submit = async () => {
       email: form.email,
       password: form.password,
     })
-    router.push({ name: '/dashboard' })
+    router.push({ name: 'dashboard' })
   } catch (error) {
     errors.value = getValidationErrors(error)
   }
