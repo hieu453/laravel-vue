@@ -2,7 +2,7 @@
   <div class="flex">
     <sidebar />
     <div class="w-full bg-gray-100">
-      <div class="mt-10 pl-4">
+      <div class="mt-10 px-4">
         <slot />
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/3">
+  <div class="w-1/3 overflow-scroll min-h-screen">
     <profile-info :user-info="authStore.user" />
     <sidebar-menu-item />
     <div class="mt-2 mb-16 flex justify-center">

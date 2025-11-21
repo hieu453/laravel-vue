@@ -1,4 +1,5 @@
 import '@/assets/main.css';
+import "vue-toastification/dist/index.css";
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -9,6 +10,7 @@ import Aura from '@primeuix/themes/aura'
 import App from './App.vue'
 import router from './router'
 import { Button } from 'primevue';
+import Toast from "vue-toastification";
 
 const app = createApp(App)
 
@@ -24,6 +26,7 @@ app.use(PrimeVue, {
         }
     }
 })
+app.use(Toast)
 
 app.component('p-button', Button)
 

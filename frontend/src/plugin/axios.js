@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useToast } from "vue-toastification";
 
 const api = axios.create({
     baseURL: 'http://localhost:8000',
@@ -13,6 +14,8 @@ const api = axios.create({
     }
 })
 
+const toast = useToast();
+
 api.interceptors.response.use(function onRejected(response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
@@ -20,6 +23,10 @@ api.interceptors.response.use(function onRejected(response) {
 }, async function onRejected(error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
+
+    if (error.code = 'ERR_NETWORK') {
+      toast.error('Cannot call api')
+    }
 
     if (error.status == 419) {
         await api.get('/sanctum/csrf-cookie')
