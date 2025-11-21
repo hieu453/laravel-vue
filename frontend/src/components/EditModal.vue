@@ -25,9 +25,11 @@
           <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
             <button
               type="button"
-              class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 hover:cursor-pointer sm:ml-3 sm:w-auto"
+              :class="[loading ? 'bg-blue-300' : 'bg-blue-600 hover:bg-blue-500','flex items-center gap-2 w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs hover:cursor-pointer sm:ml-3 sm:w-auto']"
+              :disabled="loading"
               @click="$emit('update')"
             >
+              <spinner v-if="loading" />
               Update
             </button>
             <button
@@ -49,5 +51,6 @@ import Spinner from './Spinner.vue';
 
 defineProps([
   'isOpen',
+  'loading',
 ])
 </script>

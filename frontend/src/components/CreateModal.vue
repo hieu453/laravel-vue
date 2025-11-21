@@ -25,12 +25,12 @@
           <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
             <button
               type="button"
-              :class="[loading ? 'bg-red-300' : 'bg-red-600 hover:bg-red-500' ,'inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs hover:cursor-pointer sm:ml-3 sm:w-auto']"
+              :class="[loading ? 'bg-blue-300' : 'bg-blue-600 hover:bg-blue-500','flex items-center gap-2 w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs hover:cursor-pointer sm:ml-3 sm:w-auto']"
               :disabled="loading"
-              @click="$emit('delete')"
+              @click="$emit('store')"
             >
               <spinner v-if="loading" />
-              Delete
+              Create
             </button>
             <button
               type="button"
